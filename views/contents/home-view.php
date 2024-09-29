@@ -12,7 +12,7 @@
 
 <!-- Content -->
 <div class="full-box tile-container">
-  <a href="<?php echo SERVERURL; ?>client-list/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>client-list/" class="tile">
     <div class="tile-tittle">Clientes</div>
     <div class="tile-icon">
       <i class="fas fa-users fa-fw"></i>
@@ -20,7 +20,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>item-list/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>item-list/" class="tile">
     <div class="tile-tittle">Items</div>
     <div class="tile-icon">
       <i class="fas fa-pallet fa-fw"></i>
@@ -28,7 +28,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>reservation-reservation/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>reservation-reservation/" class="tile">
     <div class="tile-tittle">Reservaciones</div>
     <div class="tile-icon">
       <i class="far fa-calendar-alt fa-fw"></i>
@@ -36,7 +36,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>reservation-pending/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>reservation-pending/" class="tile">
     <div class="tile-tittle">Prestamos</div>
     <div class="tile-icon">
       <i class="fas fa-hand-holding-usd fa-fw"></i>
@@ -44,7 +44,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>reservation-list/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>reservation-list/" class="tile">
     <div class="tile-tittle">Finalizados</div>
     <div class="tile-icon">
       <i class="fas fa-clipboard-list fa-fw"></i>
@@ -52,7 +52,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>user-list/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>user-list/" class="tile">
     <div class="tile-tittle">Usuarios</div>
     <div class="tile-icon">
       <i class="fas fa-user-secret fa-fw"></i>
@@ -60,7 +60,7 @@
     </div>
   </a>
 
-  <a href="<?php echo SERVERURL; ?>company/" class="tile">
+  <a href="<?php echo APP_SERVER; ?>company/" class="tile">
     <div class="tile-tittle">Empresa</div>
     <div class="tile-icon">
       <i class="fas fa-store-alt fa-fw"></i>

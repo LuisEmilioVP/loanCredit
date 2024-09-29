@@ -13,14 +13,14 @@
 <div class="container-fluid">
   <ul class="full-box list-unstyled page-nav-tabs">
     <li>
-      <a href="<?php echo SERVERURL;?>user-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; NUEVO USUARIO</a>
+      <a href="<?php echo APP_SERVER; ?>user-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; NUEVO USUARIO</a>
     </li>
     <li>
-      <a href="<?php echo SERVERURL;?>user-list/"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; LISTA DE
+      <a href="<?php echo APP_SERVER; ?>user-list/"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp; LISTA DE
         USUARIOS</a>
     </li>
     <li>
-      <a class="active" href="<?php echo SERVERURL;?>user-search/"><i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR
+      <a class="active" href="<?php echo APP_SERVER; ?>user-search/"><i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR
         USUARIO</a>
     </li>
   </ul>
@@ -97,7 +97,7 @@
           <td>NOMBRE DE USUARIO</td>
           <td>ADMIN@ADMIN.COM</td>
           <td>
-            <a href="<?php echo SERVERURL;?>user-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>user-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -118,7 +118,7 @@
           <td>NOMBRE DE USUARIO</td>
           <td>ADMIN@ADMIN.COM</td>
           <td>
-            <a href="<?php echo SERVERURL;?>user-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>user-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -139,7 +139,7 @@
           <td>NOMBRE DE USUARIO</td>
           <td>ADMIN@ADMIN.COM</td>
           <td>
-            <a href="<?php echo SERVERURL;?>user-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>user-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -160,7 +160,7 @@
           <td>NOMBRE DE USUARIO</td>
           <td>ADMIN@ADMIN.COM</td>
           <td>
-            <a href="<?php echo SERVERURL;?>user-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>user-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>

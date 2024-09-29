@@ -13,17 +13,17 @@
 <div class="container-fluid">
   <ul class="full-box list-unstyled page-nav-tabs">
     <li>
-      <a href="<?php echo SERVERURL;?>client-new/"><i class="fas fa-plus fa-fw"></i> &nbsp;
+      <a href="<?php echo APP_SERVER; ?>client-new/"><i class="fas fa-plus fa-fw"></i> &nbsp;
         AGREGAR
         CLIENTE</a>
     </li>
     <li>
-      <a class="active" href="<?php echo SERVERURL;?>client-list/"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp;
+      <a class="active" href="<?php echo APP_SERVER; ?>client-list/"><i class="fas fa-clipboard-list fa-fw"></i> &nbsp;
         LISTA DE
         CLIENTES</a>
     </li>
     <li>
-      <a href="<?php echo SERVERURL;?>client-search/"><i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR CLIENTE</a>
+      <a href="<?php echo APP_SERVER; ?>client-search/"><i class="fas fa-search fa-fw"></i> &nbsp; BUSCAR CLIENTE</a>
     </li>
   </ul>
 </div>
@@ -58,7 +58,7 @@
             </button>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>client-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>client-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -83,7 +83,7 @@
             </button>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>client-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>client-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -108,7 +108,7 @@
             </button>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>client-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>client-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -133,7 +133,7 @@
             </button>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>client-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>client-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>

@@ -14,22 +14,22 @@
 <div class="container-fluid">
   <ul class="full-box list-unstyled page-nav-tabs">
     <li>
-      <a href="<?php echo SERVERURL;?>reservation-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; NUEVO PRÉSTAMO</a>
+      <a href="<?php echo APP_SERVER; ?>reservation-new/"><i class="fas fa-plus fa-fw"></i> &nbsp; NUEVO PRÉSTAMO</a>
     </li>
     <li>
-      <a href="<?php echo SERVERURL;?>reservation-reservation/"><i class="far fa-calendar-alt"></i> &nbsp;
+      <a href="<?php echo APP_SERVER; ?>reservation-reservation/"><i class="far fa-calendar-alt"></i> &nbsp;
         RESERVACIONES</a>
     </li>
     <li>
-      <a href="<?php echo SERVERURL;?>reservation-pending/"><i class="fas fa-hand-holding-usd fa-fw"></i> &nbsp;
+      <a href="<?php echo APP_SERVER; ?>reservation-pending/"><i class="fas fa-hand-holding-usd fa-fw"></i> &nbsp;
         PRÉSTAMOS</a>
     </li>
     <li>
-      <a class="active" href="<?php echo SERVERURL;?>reservation-list/"><i class="fas fa-clipboard-list fa-fw"></i>
+      <a class="active" href="<?php echo APP_SERVER; ?>reservation-list/"><i class="fas fa-clipboard-list fa-fw"></i>
         &nbsp; FINALIZADOS</a>
     </li>
     <li>
-      <a href="<?php echo SERVERURL;?>reservation-search/"><i class="fas fa-search-dollar fa-fw"></i> &nbsp; BUSCAR POR
+      <a href="<?php echo APP_SERVER; ?>reservation-search/"><i class="fas fa-search-dollar fa-fw"></i> &nbsp; BUSCAR POR
         FECHA</a>
     </li>
   </ul>
@@ -65,7 +65,7 @@
             </a>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>reservation-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>reservation-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -90,7 +90,7 @@
             </a>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>reservation-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>reservation-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -115,7 +115,7 @@
             </a>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>reservation-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>reservation-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
@@ -140,7 +140,7 @@
             </a>
           </td>
           <td>
-            <a href="<?php echo SERVERURL;?>reservation-update/" class="btn btn-success">
+            <a href="<?php echo APP_SERVER; ?>reservation-update/" class="btn btn-success">
               <i class="fas fa-sync-alt"></i>
             </a>
           </td>
