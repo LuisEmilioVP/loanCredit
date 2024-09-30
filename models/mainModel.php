@@ -3,10 +3,10 @@
 if ($petitionAjax) {
   require_once "../config/server.php";
 } else {
-  require_once "../config/server.php";
+  require_once "./config/server.php";
 }
 
-final class mainModel
+class mainModel
 {
   /** ---------- Funcion: Conextar a la Base de Dato ---------- **/
   protected static function connectionDb()
@@ -28,7 +28,7 @@ final class mainModel
   /** ---------- Funcion: Encriptar Cadenas ---------- **/
   public function encryption($string)
   {
-    $output = false;
+    $output = FALSE;
     $key = hash('sha256', SECRET_KEY);
     $iv = substr(hash('sha256', SECRET_IV), 0, 16);
     $output = openssl_encrypt($string, METHOD_HASH, $key, 0, $iv);
@@ -71,6 +71,10 @@ final class mainModel
     $data = str_ireplace("TRUNCATE TABLE", "", $data);
     $data = str_ireplace("SHOW TABLES", "", $data);
     $data = str_ireplace("SHOW DATABASES", "", $data);
+    $data = str_ireplace("<?php", "", $data);
+    $data = str_ireplace("?>", "", $data);
+    $data = str_ireplace("<?=", "", $data);
+    $data = str_ireplace("?>", "", $data);
     $data = str_ireplace("union", "", $data);
     $data = str_ireplace("select", "", $data);
     $data = str_ireplace("from", "", $data);

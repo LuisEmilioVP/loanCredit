@@ -7,19 +7,19 @@ function sendFormAjax(form) {
 	//* - Obtener datos del form
 	let data = new FormData(this);
 	//* - Obtener método del form
-	let method_form = this.getAttribute('method');
+	let method = this.getAttribute('method');
 	//* - Obtener el action del form
-	let action_form = this.getAttribute('action');
+	let action = this.getAttribute('action');
 	//* - Obtener el tipo de form
-	let data_form = this.getAttribute('data-form');
+	let type = this.getAttribute('data-form');
 
-	let header_form = new Headers();
+	let header = new Headers();
 
 	//** Array para pasar todas las configuraciones a las funciones para el envío y recibimiento de los datos */
 
-	let config_form = {
-		method: method_form,
-		headers: header_form,
+	let config = {
+		method: method,
+		headers: header,
 		mode: 'cors',
 		cache: 'no-cache',
 		body: data,
@@ -29,16 +29,16 @@ function sendFormAjax(form) {
 
 	let text_alert;
 
-	if (data_form === 'save') {
+	if (type === 'save') {
 		text_alert = 'Los datos quedarán guardados en el sistema';
-	} else if (data_form === 'delete') {
+	} else if (type === 'delete') {
 		text_alert = 'Los datos serán eliminados completamente del sistema';
-	} else if (data_form === 'update') {
+	} else if (type === 'update') {
 		text_alert = 'Los datos del sistema serán actualizados';
-	} else if (data_form === 'search') {
+	} else if (type === 'search') {
 		text_alert =
 			'Se eliminará el término de búsqueda, tendrás que volver a escribir nuevamente';
-	} else if (data_form === 'loans') {
+	} else if (type === 'loans') {
 		text_alert =
 			' Desea remover los datos seleccionados para préstamos o reservaciones';
 	} else {
@@ -57,16 +57,14 @@ function sendFormAjax(form) {
 		cancelButtonText: 'Cancelar',
 	}).then((result) => {
 		if (result.value) {
-			fetch(action_form, config_form)
+			fetch(action, config)
 				.then((response) => response.json())
-				.then((responmse) => {
-					return alertsSystem(responmse);
+				.then((response) => {
+					return alerts_ajax(response);
+				})
+				.catch((error) => {
+					console.error('Error: ', error);
 				});
-			Swal.fire({
-				title: '¡Bien!',
-				text: 'La operación fue realizada correctamente.',
-				type: 'success',
-			});
 		}
 	});
 }
@@ -77,37 +75,37 @@ form_ajax.forEach((forms) => {
 });
 
 /** --- Funcion: Alertas del Sistema --- **/
-function alertsSystem(alert) {
-	if (alert.AlertSys === 'simple') {
+function alerts_ajax(alert) {
+	if (alert.Alerts === 'simple') {
 		Swal.fire({
-			title: alert.Titulo,
-			text: alert.Texto,
-			type: alert.Tipo,
+			title: alert.Title,
+			text: alert.Text,
+			type: alert.Tipe,
 			confirmButtonText: 'Aceptar',
 		});
-	} else if (alert.AlertSys === 'reload') {
+	} else if (alert.Alerts === 'reload') {
 		Swal.fire({
-			title: alert.Titulo,
-			text: alert.Texto,
-			type: alert.Tipo,
+			title: alert.Title,
+			text: alert.Text,
+			type: alert.Tipe,
 			confirmButtonText: 'Aceptar',
 		}).then((result) => {
 			if (result.value) {
 				location.reload();
 			}
 		});
-	} else if (alert.AlertSys === 'clean') {
+	} else if (alert.Alerts === 'clean') {
 		Swal.fire({
-			title: alert.Titulo,
-			text: alert.Texto,
-			type: alert.Tipo,
+			title: alert.Title,
+			text: alert.Text,
+			type: alert.Tipe,
 			confirmButtonText: 'Aceptar',
 		}).then((result) => {
 			if (result.value) {
 				document.querySelector('.FromAjax').reset();
 			}
 		});
-	} else if (alert.AlertSys === 'redirect') {
+	} else if (alert.Alerts === 'redirect') {
 		window.location.href = alert.URL;
 	}
 }
