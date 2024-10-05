@@ -24,7 +24,16 @@
   if ($resultView == "login" || $resultView == "404") {
     require_once "./views/contents/" . $resultView . "-view.php";
   } else {
+    //* - Iniciar la sesión
+    session_start(['name' => 'LoanC']);
+    //* - Forzar Cierre de Sesion
+    require_once "./controllers/loginController.php";
+    $ins_login = new loginController();
 
+    if (!isset($_SESSION['token_spm']) || !isset($_SESSION['user_spm']) || !isset($_SESSION['role_spm']) || !isset($_SESSION['id_spm'])) {
+      echo $ins_login->logoutController();
+      exit();
+    }
   ?>
     <!-- Main container -->
     <main class="full-box main-container">
@@ -46,6 +55,7 @@
 
     <!-- Include JavaScript files -->
   <?php
+    include "./views/include/logout.php";
   }
   include "./views/include/scritps.php";
   ?>

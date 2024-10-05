@@ -1,3 +1,10 @@
+<?php
+if ($_SESSION['role_spm'] != 1) {
+  echo $ins_login->logoutController();
+  exit();
+}
+?>
+
 <!-- Page header -->
 <div class="full-box page-header">
   <h3 class="text-left">
