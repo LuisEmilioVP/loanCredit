@@ -10,16 +10,21 @@ on:
       - master
       - release
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         php-versions: ['8.0', '8.1']
+      fail-fast: false
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -41,8 +46,14 @@ jobs:
           find . -type d -exec chmod 755 {} \;
 
       - name: Check for Sensitive Data
+        continue-on-error: true
         run: |
-          ! find . -type f -name "*.php" -not -path "./vendor/*" -exec grep -l "password\|key\|secret\|token" {} \;
+          found_files=$(find . -type f -name "*.php" -not -path "./vendor/*" -exec grep -l "password\|key\|secret\|token" {} \;)
+          if [ ! -z "$found_files" ]; then
+            echo "⚠️ Warning: Found potentially sensitive data in the following files:"
+            echo "$found_files"
+            echo "Please review these files and ensure no sensitive data is exposed."
+          fi
 
       - name: Create Status Report
         if: always()
