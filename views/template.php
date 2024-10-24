@@ -26,6 +26,8 @@
   } else {
     //* - Iniciar la sesión
     session_start(['name' => 'LoanC']);
+
+    $page = explode("/", $_GET['view']);
     //* - Forzar Cierre de Sesion
     require_once "./controllers/loginController.php";
     $ins_login = new loginController();

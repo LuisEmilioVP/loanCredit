@@ -106,6 +106,6 @@ function alerts_ajax(alert) {
 			}
 		});
 	} else if (alert.Alerts === 'redirect') {
-		window.location.href = alert.URL;
+		window.location.href = alert.Url;
 	}
 }

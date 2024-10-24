@@ -1,12 +1,11 @@
 <div class="login-container">
   <div class="login-content">
     <p class="text-center">
-      <!-- <i class="fas fa-user-circle fa-5x"></i> -->
       <img src="<?php echo APP_SERVER; ?>views/assets/img/logo.png" alt="LoanCredit-logo" class="img-fluid">
     </p>
     <h2 class="text-center">Loan Credit</h2>
     <hr class="line-separator">
-    <p class="text-center mt-2">Iniciar Sesion</p>
+    <p class="text-center mt-2">Iniciar Sesion con tu cuenta</p>
 
     <form action="" method="POST" autocomplete="off">
       <div class="form-group">

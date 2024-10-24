@@ -67,7 +67,7 @@ if ($_SESSION['role_spm'] != 1) {
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="usuario_telefono" class="bmd-label-floating">Teléfono</label>
-              <input type="text" pattern="[0-9()+\-]{14,20}" class="form-control" name="usuario_telefono_reg"
+              <input type="text" pattern="[0-9()+ ]{14,20}" class="form-control" name="usuario_telefono_reg"
                 id="usuario_telefono" maxlength="20" />
             </div>
           </div>
