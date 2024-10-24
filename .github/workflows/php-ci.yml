@@ -1,0 +1,67 @@
+name: PHP CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - feature_01
+  pull_request:
+    branches:
+      - dev
+      - master
+      - release
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['7.4', '8.0', '8.1']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, pdo, mysql, session
+          coverage: xdebug
+
+      - name: Check PHP Version
+        run: php -v
+
+      - name: Check PHP Syntax
+        run: |
+          find . -type f -name '*.php' -not -path "./vendor/*" -print0 | xargs -0 -n1 php -l
+
+      - name: Check File Permissions
+        run: |
+          find . -type f -name "*.php" -exec chmod 644 {} \;
+          find . -type d -exec chmod 755 {} \;
+
+      - name: Check for Sensitive Data
+        run: |
+          ! find . -type f -name "*.php" -not -path "./vendor/*" -exec grep -l "password\|key\|secret\|token" {} \;
+
+      - name: Create Status Report
+        if: always()
+        run: |
+          echo "## Workflow Status Report" > $GITHUB_STEP_SUMMARY
+          echo "🔍 Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "👤 Author: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "📝 Commit Message: ${{ github.event.head_commit.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "⏰ Completed at: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Issue on Failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Pipeline Failed on ${process.env.GITHUB_REF}`,
+              body: `Pipeline failed in branch: ${process.env.GITHUB_REF}\nCommit: ${process.env.GITHUB_SHA}\nAuthor: ${process.env.GITHUB_ACTOR}\n\nPlease check the workflow logs for more details.`
+            });
