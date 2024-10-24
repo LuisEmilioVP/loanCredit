@@ -3,7 +3,7 @@
     <a href="#" class="float-left show-nav-lateral">
       <i class="fas fa-exchange-alt"></i>
     </a>
-    <a href="<?php echo APP_SERVER; ?>user-update/">
+    <a href="<?php echo APP_SERVER . "user-update/" . $ins_login->encryption($_SESSION['id_spm']) . "/"; ?>">
       <i class="fas fa-user-cog"></i>
     </a>
     <a href="#" class="btn-exit-system">

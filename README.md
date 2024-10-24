@@ -17,6 +17,4 @@ Sistema para administración de prestamos de mobiliario y equipo desarrollado en
 - Administración de datos de la empresa.
 - Facturas en formato PDF
 
-## 👨‍💻 Desarrollado por
-
-Luis Emilio - [luisemiliovp](https://github.com/LuisEmilioVP)
+## 👨‍💻 Luis Emilio - [luisemiliovp](https://github.com/LuisEmilioVP)

@@ -52,13 +52,20 @@
     </div>
   </a>
 
-  <a href="<?php echo APP_SERVER; ?>user-list/" class="tile">
-    <div class="tile-tittle">Usuarios</div>
-    <div class="tile-icon">
-      <i class="fas fa-user-secret fa-fw"></i>
-      <p>50 Registrados</p>
-    </div>
-  </a>
+  <?php
+  if ($_SESSION['role_spm'] == 1) {
+    require_once "./controllers/userController.php";
+    $ins_userUpdate = new userController();
+    $countUsers = $ins_userUpdate->selectUserController("Count", 0);
+  ?>
+    <a href="<?php echo APP_SERVER; ?>user-list/" class="tile">
+      <div class="tile-tittle">Usuarios</div>
+      <div class="tile-icon">
+        <i class="fas fa-user-secret fa-fw"></i>
+        <p><?php echo $countUsers->rowCount(); ?> Registrados</p>
+      </div>
+    </a>
+  <?php } ?>
 
   <a href="<?php echo APP_SERVER; ?>company/" class="tile">
     <div class="tile-tittle">Empresa</div>
