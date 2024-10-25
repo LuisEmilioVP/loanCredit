@@ -28,6 +28,34 @@ class clientModel extends mainModel
     $sql->execute();
     return $sql;
   }
+
+  /** ---------- modelos: Seleccionar Cliente ---------- **/
+  protected static function selectClientModel($type, $id)
+  {
+    if ($type == "Unique") {
+      $sql = mainModel::connectionDb()->prepare("SELECT * FROM cliente WHERE cliente_id = :id");
+      $sql->bindParam(":id", $id);
+    } else if ($type == "Count") {
+      $sql = mainModel::connectionDb()->prepare("SELECT cliente_id FROM cliente");
+    }
+
+    $sql->execute();
+    return $sql;
+  }
+
   /** ---------- Modelo: Actualizar Cliente ---------- **/
-  protected static function updateClientModel($data) {}
+  protected static function updateClientModel($data)
+  {
+    $sql = mainModel::connectionDb()->prepare("UPDATE cliente SET cliente_dni=:din, cliente_nombre=:nombre, cliente_apellido=:apellido, cliente_telefono=:telefono, cliente_direccion=:direccion WHERE cliente_id=:id");
+
+    $sql->bindParam(":din", $data["dni"]);
+    $sql->bindParam(":nombre", $data["nombre"]);
+    $sql->bindParam(":apellido", $data["apellido"]);
+    $sql->bindParam(":telefono", $data["telefono"]);
+    $sql->bindParam(":direccion", $data["direccion"]);
+    $sql->bindParam(":id", $data["id"]);
+
+    $sql->execute();
+    return $sql;
+  }
 }

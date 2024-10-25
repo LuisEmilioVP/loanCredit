@@ -12,11 +12,16 @@
 
 <!-- Content -->
 <div class="full-box tile-container">
+  <?php
+  require_once "./controllers/clientController.php";
+  $ins_client = new clientController();
+  $countClients = $ins_client->selectClientController("Count", 0);
+  ?>
   <a href="<?php echo APP_SERVER; ?>client-list/" class="tile">
     <div class="tile-tittle">Clientes</div>
     <div class="tile-icon">
       <i class="fas fa-users fa-fw"></i>
-      <p>5 Registrados</p>
+      <p><?php echo $countClients->rowCount(); ?> Registrados</p>
     </div>
   </a>
 

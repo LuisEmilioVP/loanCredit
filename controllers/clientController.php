@@ -301,6 +301,19 @@ class clientController extends clientModel
       exit();
     }
 
+    //* - Verificar privilegio del Usuario
+    session_start(['name' => 'LoanC']);
+    if ($_SESSION['role_spm'] != 1) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No tienes los permisos necesarios para realizar esta operacion.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
     //* - Eliminar cliente
     $delete_client = clientModel::deleteClientModel($id);
 
@@ -321,4 +334,173 @@ class clientController extends clientModel
     }
     echo json_encode($alert);
   } //* - Fin controlador Eliminar Clientes
+
+  /** ---------- Controlador: Seleccionar Datos de Clientes ---------- **/
+  public function selectClientController($type, $id)
+  {
+    $type = mainModel::cleanData($type);
+
+    $id = mainModel::decryption($id);
+    $id = mainModel::cleanData($id);
+
+    return clientModel::selectClientModel($type, $id);
+  } //* - Fin controlador Seleccionar Datos de Clientes
+
+  /** ---------- Controlador: Actualizar Clientes ---------- **/
+  public function updateClientController()
+  {
+    //* - Recibir id del cliente
+    $id = mainModel::decryption($_POST['cliente_id_up']);
+    $id = mainModel::cleanData($id);
+
+    //* - Comprobar el cliente en la DB
+    $check_client = mainModel::simpleQuery("SELECT * FROM cliente WHERE cliente_id = '$id'");
+
+    if ($check_client->rowCount() <= 0) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No hemos encontrado el cliente en el sistema.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    } else {
+      $content = $check_client->fetch();
+    }
+
+    //* - Recibir datos del formu y limpiarlos
+    $dni = mainModel::cleanData($_POST['cliente_dni_up']);
+    $nombre = mainModel::cleanData($_POST['cliente_nombre_up']);
+    $apellido = mainModel::cleanData($_POST['cliente_apellido_up']);
+    $telefono = mainModel::cleanData($_POST['cliente_telefono_up']);
+    $direccion = mainModel::cleanData($_POST['cliente_direccion_up']);
+
+    //* - Comprobar campos obligatorios
+    if ($dni == "" || $nombre == "" || $apellido == "") {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No has llenado todos los campos que son obligatorios.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificación - Integridad de los datos
+    if (mainModel::verifyData("[0-9\-]{10,20}", $dni)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El DNI no coincide con el formato solicitado.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $nombre)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Nombre no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $apellido)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Apellido no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if ($telefono != "") {
+      if (mainModel::verifyData("[0-9\(\)\+ ]{14,20}", $telefono)) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "El Teléfono no coincide con el formato solicitado",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    if ($direccion != "") {
+      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}", $direccion)) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "La Dirección no coincide con el formato solicitado",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    //* - Verificación de atributos unicos
+    if ($dni != $content['cliente_dni']) {
+      $check_dni = mainModel::simpleQuery("SELECT cliente_dni FROM cliente WHERE cliente_dni = '$dni'");
+      if ($check_dni->rowCount() > 0) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "El DNI ingresado ya se encuentra registrado en el sistema.",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    //* - Verificar privilegios para actualizar
+    session_start(['name' => 'LoanC']);
+    if ($_SESSION['role_spm'] < 1 || $_SESSION['role_spm'] > 2) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No tienes los permisos necesarios para realizar esta operacion.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Obtener datos para el enviado
+    $data_client_up = [
+      "dni" => $dni,
+      "nombre" => $nombre,
+      "apellido" => $apellido,
+      "telefono" => $telefono,
+      "direccion" => $direccion,
+      "id" => $id
+    ];
+
+    if (clientModel::updateClientModel($data_client_up)) {
+      $alert = [
+        "Alerts" => "reload",
+        "Title" => "Datos actualizados",
+        "Text" => "Los datos han sido actualizados con exito.",
+        "Tipe" => "success"
+      ];
+    } else {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No hemos podido actualizar los datos, por favor intente nuevamente.",
+        "Tipe" => "error"
+      ];
+    }
+    echo json_encode($alert);
+  } //* - Fin de controlador actualizar Clientes
 }
