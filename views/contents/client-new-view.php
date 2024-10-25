@@ -28,7 +28,7 @@
 
 <!-- Content here-->
 <div class="container-fluid">
-  <form action="" class="form-neon" autocomplete="off">
+  <form class="form-neon FromAjax" action="<?php echo APP_SERVER; ?>ajax/clientAjax.php" method="post" data-form="save" autocomplete="off">
     <fieldset>
       <legend><i class="fas fa-user"></i> &nbsp; Información básica</legend>
       <div class="container-fluid">
@@ -36,31 +36,31 @@
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="cliente_dni" class="bmd-label-floating">DNI</label>
-              <input type="text" pattern="[0-9-]{1,27}" class="form-control" name="cliente_dni_reg" id="cliente_dni"
-                maxlength="27">
+              <input type="text" pattern="[0-9\-]{10,20}" class="form-control" name="cliente_dni_reg" id="cliente_dni"
+                maxlength="27" required="">
             </div>
           </div>
 
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="cliente_nombre" class="bmd-label-floating">Nombre</label>
-              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,40}" class="form-control" name="cliente_nombre_reg"
-                id="cliente_nombre" maxlength="40">
+              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}" class="form-control" name="cliente_nombre_reg"
+                id="cliente_nombre" maxlength="40" required="">
             </div>
           </div>
 
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label for="cliente_apellido" class="bmd-label-floating">Apellido</label>
-              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,40}" class="form-control" name="cliente_apellido_reg"
-                id="cliente_apellido" maxlength="40">
+              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}" class="form-control" name="cliente_apellido_reg"
+                id="cliente_apellido" maxlength="40" required="">
             </div>
           </div>
 
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label for="cliente_telefono" class="bmd-label-floating">Teléfono</label>
-              <input type="text" pattern="[0-9()+]{8,20}" class="form-control" name="cliente_telefono_reg"
+              <input type="text" pattern="[0-9\(\)\+ ]{14,20}" class="form-control" name="cliente_telefono_reg"
                 id="cliente_telefono" maxlength="20">
             </div>
           </div>
@@ -68,7 +68,7 @@
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label for="cliente_direccion" class="bmd-label-floating">Dirección</label>
-              <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{1,150}" class="form-control"
+              <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}" class="form-control"
                 name="cliente_direccion_reg" id="cliente_direccion" maxlength="150">
             </div>
           </div>

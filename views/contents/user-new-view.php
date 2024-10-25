@@ -45,8 +45,8 @@ if ($_SESSION['role_spm'] != 1) {
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label for="usuario_dni" class="bmd-label-floating">DNI</label>
-              <input type="text" pattern="[0-9\-]{13,20}" class="form-control" name="usuario_dni_reg" id="usuario_dni"
-                maxlength="20" />
+              <input type="text" pattern="[0-9\-]{10,20}" class="form-control" name="usuario_dni_reg" id="usuario_dni"
+                maxlength="20" required="" />
             </div>
           </div>
 
@@ -60,21 +60,21 @@ if ($_SESSION['role_spm'] != 1) {
           <div class="col-12 col-md-4">
             <div class="form-group">
               <label for="usuario_apellido" class="bmd-label-floating">Apellidos</label>
-              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{1,35}" class="form-control" name="usuario_apellido_reg"
+              <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}" class="form-control" name="usuario_apellido_reg"
                 id="usuario_apellido" maxlength="35" required="" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="usuario_telefono" class="bmd-label-floating">Teléfono</label>
-              <input type="text" pattern="[0-9()+ ]{14,20}" class="form-control" name="usuario_telefono_reg"
+              <input type="text" pattern="[0-9\(\)\+ ]{14,20}" class="form-control" name="usuario_telefono_reg"
                 id="usuario_telefono" maxlength="20" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="usuario_direccion" class="bmd-label-floating">Dirección</label>
-              <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ().,#\- ]{6,190}" class="form-control"
+              <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}" class="form-control"
                 name="usuario_direccion_reg" id="usuario_direccion" maxlength="190" />
             </div>
           </div>
@@ -107,14 +107,14 @@ if ($_SESSION['role_spm'] != 1) {
             <div class="form-group">
               <label for="usuario_clave_1" class="bmd-label-floating">Contraseña</label>
               <input type="password" class="form-control" name="usuario_clave_1_reg" id="usuario_clave_1"
-                pattern="[a-zA-Z0-9$@.-]{7,100}" maxlength="100" required="" />
+                pattern="[a-zA-Z0-9$@.\-]{7,100}" maxlength="100" required="" />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="form-group">
               <label for="usuario_clave_2" class="bmd-label-floating">Repetir contraseña</label>
               <input type="password" class="form-control" name="usuario_clave_2_reg" id="usuario_clave_2"
-                pattern="[a-zA-Z0-9$@.-]{7,100}" maxlength="100" required="" />
+                pattern="[a-zA-Z0-9$@.\-]{7,100}" maxlength="100" required="" />
             </div>
           </div>
         </div>
