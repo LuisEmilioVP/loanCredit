@@ -23,7 +23,7 @@ class clientController extends clientModel
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "No han llenado todos los campos que son obligatorios",
+        "Text" => "No han llenado todos los campos que son requeridos",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
