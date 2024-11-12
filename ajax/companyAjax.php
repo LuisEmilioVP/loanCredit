@@ -25,5 +25,3 @@ if (isset($_POST['empresa_nombre_reg']) || isset($_POST['empresa_id_up'])) {
   header('Location: ' . APP_SERVER . 'login/');
   exit();
 }
-
-//* - https://www.youtube.com/watch?v=OcJkvzIa9gw

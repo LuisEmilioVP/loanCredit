@@ -668,7 +668,7 @@ class userController extends userModel
         $alert = [
           "Alerts" => "simple",
           "Title" => "Ocurrió un error inesperado",
-          "Text" => "El nuevo email ingresado ya se encuentra registrado en el sistema.",
+          "Text" => "El email ingresado no coincide con el formato solicitado.",
           "Tipe" => "error"
         ];
         echo json_encode($alert);

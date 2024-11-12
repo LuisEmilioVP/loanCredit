@@ -40,7 +40,7 @@
               <div class="col-12 col-md-6">
                 <div class="form-group">
                   <label for="empresa_email" class="bmd-label-floating">Correo</label>
-                  <input type="email" class="form-control" name="empresa_email_reg" id="empresa_email" maxlength="70" required="" />
+                  <input type="email" class="form-control" name="empresa_email_reg" id="empresa_email" maxlength="70" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}" required="" />
                 </div>
               </div>
 
@@ -79,51 +79,51 @@
   ?>
     <div class="container-fluid">
       <form class="form-neon FromAjax" action="<?php echo APP_SERVER; ?>ajax/companyAjax.php" method="POST" data-form="update" autocomplete="off">
-        <imput type="hidden" name="empresa_id_up" value="<?php echo $content['empresa_id']; ?>">
-          <fieldset>
-            <legend>
-              <i class="far fa-building"></i> &nbsp;Actualizar Información de la
-              empresa
-            </legend>
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-12 col-md-6">
-                  <div class="form-group">
-                    <label for="empresa_nombre_up" class="bmd-label-floating">Nombre de la empresa</label>
-                    <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,70}" class="form-control"
-                      name="empresa_nombre_up" id="empresa_nombre_up" maxlength="70" value="<?php echo $content['empresa_nombre']; ?>" required="" />
-                  </div>
+        <input type="hidden" name="empresa_id_up" value="<?php echo $content['empresa_id']; ?>">
+        <fieldset>
+          <legend>
+            <i class="far fa-building"></i> &nbsp;Actualizar Información de la
+            empresa
+          </legend>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="form-group">
+                  <label for="empresa_nombre_id" class="bmd-label-floating">Nombre de la empresa</label>
+                  <input type="text" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,70}" class="form-control"
+                    name="empresa_nombre_up" id="empresa_nombre_id" maxlength="70" value="<?php echo $content['empresa_nombre']; ?>" required="" />
                 </div>
+              </div>
 
-                <div class="col-12 col-md-6">
-                  <div class="form-group">
-                    <label for="empresa_email_up" class="bmd-label-floating">Correo</label>
-                    <input type="email" class="form-control" name="empresa_email_up" id="empresa_email_up" maxlength="70" value="<?php echo $content['empresa_email']; ?>" required="" />
-                  </div>
+              <div class="col-12 col-md-6">
+                <div class="form-group">
+                  <label for="empresa_email_up" class="bmd-label-floating">Correo</label>
+                  <input type="email" class="form-control" name="empresa_email_up" id="empresa_email_up" maxlength="70" value="<?php echo $content['empresa_email']; ?>" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}" required="" />
                 </div>
-                <div class="col-12 col-md-6">
-                  <div class="form-group">
-                    <label for="empresa_telefono_up" class="bmd-label-floating">Telefono</label>
-                    <input type="text" pattern="[0-9\(\)\+ ]{14,20}" class="form-control" name="empresa_telefono_up"
-                      id="empresa_telefono_up" maxlength="20" value="<?php echo $content['empresa_telefono']; ?>" required="" />
-                  </div>
+              </div>
+              <div class=" col-12 col-md-6">
+                <div class="form-group">
+                  <label for="empresa_telefono_id" class="bmd-label-floating">Telefono</label>
+                  <input type="text" pattern="[0-9\(\)\+ ]{14,20}" class="form-control" name="empresa_telefono_up"
+                    id="empresa_telefono_id" maxlength="20" value="<?php echo $content['empresa_telefono']; ?>" required="" />
                 </div>
-                <div class="col-12 col-md-6">
-                  <div class="form-group">
-                    <label for="empresa_direccion_up" class="bmd-label-floating">Dirección</label>
-                    <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}" class="form-control"
-                      name="empresa_direccion_up" id="empresa_direccion_up" maxlength="190" value="<?php echo $content['empresa_direccion']; ?>" required="" />
-                  </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="form-group">
+                  <label for="empresa_direccion_id" class="bmd-label-floating">Dirección</label>
+                  <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}" class="form-control"
+                    name="empresa_direccion_up" id="empresa_direccion_id" maxlength="190" value="<?php echo $content['empresa_direccion']; ?>" required="" />
                 </div>
               </div>
             </div>
-          </fieldset>
-          <br /><br /><br />
-          <p class="text-center" style="margin-top: 40px">
-            <button type="submit" class="btn btn-raised btn-success btn-sm">
-              <i class="fas fa-sync-alt"></i> &nbsp; ACTUALIZAR
-            </button>
-          </p>
+          </div>
+        </fieldset>
+        <br /><br /><br />
+        <p class="text-center" style="margin-top: 40px">
+          <button type="submit" class="btn btn-raised btn-success btn-sm">
+            <i class="fas fa-sync-alt"></i> &nbsp; ACTUALIZAR
+          </button>
+        </p>
       </form>
     </div>
   <?php } else { ?>

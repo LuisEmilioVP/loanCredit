@@ -69,7 +69,7 @@ class companyController extends companyModel
       exit();
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (mainModel::verifyData("[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}", $email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
@@ -179,7 +179,7 @@ class companyController extends companyModel
       exit();
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (mainModel::verifyData("[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}", $email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
@@ -192,5 +192,43 @@ class companyController extends companyModel
 
     //* - Comprobar permisos
     session_start(['name' => 'LoanC']);
-  }
+
+    if ($_SESSION['role_spm'] < 1 || $_SESSION['role_spm'] > 2) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No tienes los permisos necesarios para realizar esta acción.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Cargar datos de la empresa
+    $data_company_up = [
+      "id" => $id,
+      "nombre" => $nombre,
+      "email" => $email,
+      "telefono" => $telefono,
+      "direccion" => $direccion
+    ];
+
+    //* - Actualizar empresa
+    if (companyModel::updateCompanyModel($data_company_up)) {
+      $alert = [
+        "Alerts" => "reload",
+        "Title" => "Registro exitoso",
+        "Text" => "La Empresa se ha actualizado exitosamente.",
+        "Tipe" => "success"
+      ];
+    } else {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No se pudo registrar la Empresa. Por favor intenta de nuevo.",
+        "Tipe" => "error"
+      ];
+    }
+    echo json_encode($alert);
+  } //* - Fin Controlador: Actualizar Empresa
 }
