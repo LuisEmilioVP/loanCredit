@@ -104,11 +104,14 @@
                 </li>
               </ul>
             </li>
-          <?php   } ?>
+          <?php   }
 
-          <li>
-            <a href="<?php echo APP_SERVER; ?>company/"><i class="fas fa-store-alt fa-fw"></i> &nbsp; Empresa</a>
-          </li>
+          if ($_SESSION['role_spm'] == 1 || $_SESSION['role_spm'] == 2) {
+          ?>
+            <li>
+              <a href="<?php echo APP_SERVER; ?>company/"><i class="fas fa-store-alt fa-fw"></i> &nbsp; Empresa</a>
+            </li>
+          <?php } ?>
         </ul>
       </nav>
     </div>

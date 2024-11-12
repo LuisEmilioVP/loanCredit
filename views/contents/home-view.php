@@ -12,11 +12,16 @@
 
 <!-- Content -->
 <div class="full-box tile-container">
+  <?php
+  require_once "./controllers/clientController.php";
+  $ins_client = new clientController();
+  $countClients = $ins_client->selectClientController("Count", 0);
+  ?>
   <a href="<?php echo APP_SERVER; ?>client-list/" class="tile">
     <div class="tile-tittle">Clientes</div>
     <div class="tile-icon">
       <i class="fas fa-users fa-fw"></i>
-      <p>5 Registrados</p>
+      <p><?php echo $countClients->rowCount(); ?> Registrados</p>
     </div>
   </a>
 
@@ -67,11 +72,14 @@
     </a>
   <?php } ?>
 
-  <a href="<?php echo APP_SERVER; ?>company/" class="tile">
-    <div class="tile-tittle">Empresa</div>
-    <div class="tile-icon">
-      <i class="fas fa-store-alt fa-fw"></i>
-      <p>1 Registrada</p>
-    </div>
-  </a>
+  <?php
+  if ($_SESSION['role_spm'] == 1 || $_SESSION['role_spm'] == 2) { ?>
+    <a href="<?php echo APP_SERVER; ?>company/" class="tile">
+      <div class="tile-tittle">Empresa</div>
+      <div class="tile-icon">
+        <i class="fas fa-store-alt fa-fw"></i>
+        <p>1 Registrada</p>
+      </div>
+    </a>
+  <?php } ?>
 </div>
