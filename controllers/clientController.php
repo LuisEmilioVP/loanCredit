@@ -265,7 +265,8 @@ class clientController extends clientModel
     }
 
     return $table;
-  }
+  } //* - Fin Controlador: Paginar Clientes
+
   /** ---------- Controlador: Eliminar Clientes ---------- **/
   public function deleteClientController()
   {
