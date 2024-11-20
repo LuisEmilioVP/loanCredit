@@ -229,7 +229,7 @@ class itemController extends itemModel
           $table .= '
           	<td>
 							<form class="FromAjax" action="' . APP_SERVER . 'ajax/itemAjax.php" method="POST" data-form="delete" autocomplete="off">
-								<input type="hidden" name="cliente_id_del" value="' . mainModel::encryption($rows['item_id']) . '">
+								<input type="hidden" name="item_id_del" value="' . mainModel::encryption($rows['item_id']) . '">
 								<button type="submit" class="btn btn-warning">
 										<i class="far fa-trash-alt"></i>
 								</button>
@@ -263,8 +263,254 @@ class itemController extends itemModel
     return $table;
   } //* - Fin Controlador: Paginar Items
 
-  /** ---------- Controlador: Actualizar Items ---------- **/
-  public function updateItemController() {}
   /** ---------- Controlador: Eliminar Items ---------- **/
-  public function deleteItemController() {}
+  public function deleteItemController()
+  {
+    //* - recibir ID del cliente
+    $id = mainModel::decryption($_POST['item_id_del']);
+    $id = mainModel::cleanData($id);
+
+    //* - Verificar el cliente en la DB
+    $check_item = mainModel::simpleQuery("SELECT item_id FROM item WHERE item_id = '$id'");
+
+    if ($check_item->rowCount() <= 0) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El item que intenta eliminar no existe en el sistema.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificar los detalles del item
+    $check_detail = mainModel::simpleQuery("SELECT item_id FROM detalle WHERE item_id = '$id' LIMIT 1");
+
+    if ($check_detail->rowCount() < 0) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No podemos eliminar este item debido a que tiene detalles asociados. Recomendamos deshabilitar el item si ya no sera utilizado.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificar privilegio del Usuario
+    session_start(['name' => 'LoanC']);
+    if ($_SESSION['role_spm'] != 1) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No tienes los permisos necesarios para realizar esta operacion.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Eliminar item
+    $delete_item = itemModel::deleteItemModel($id);
+
+    if ($delete_item->rowCount() == 1) {
+      $alert = [
+        "Alerts" => "reload",
+        "Title" => "Item eliminado!",
+        "Text" => "El item ha sido eliminado del sistema exitosamente.",
+        "Tipe" => "success"
+      ];
+    } else {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No hemos podido eliminar el item, por favor intente nuevamente.",
+        "Tipe" => "error"
+      ];
+    }
+    echo json_encode($alert);
+  } //* - Fin controlador Eliminar Items
+
+  /** ---------- Controlador: Seleccionar Datos de Items ---------- **/
+  public function selectItemController($type, $id)
+  {
+    $type = mainModel::cleanData($type);
+
+    $id = mainModel::decryption($id);
+    $id = mainModel::cleanData($id);
+
+    return itemModel::selectItemModel($type, $id);
+  } //* - Fin controlador Seleccionar Items
+
+  /** ---------- Controlador: Actualizar Items ---------- **/
+  public function updateItemController()
+  {
+    //* - Recibir id del cliente
+    $id = mainModel::decryption($_POST['item_id_up']);
+    $id = mainModel::cleanData($id);
+
+    //* - Comprobar el item en la DB
+    $check_item = mainModel::simpleQuery("SELECT * FROM item WHERE item_id = '$id'");
+
+    if ($check_item->rowCount() <= 0) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No hemos encontrado el item en el sistema.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    } else {
+      $content = $check_item->fetch();
+    }
+
+    //* - Recibir datos del formu y limpiarlos
+    $code = mainModel::cleanData($_POST['item_codigo_up']);
+    $nombre = mainModel::cleanData($_POST['item_nombre_up']);
+    $stock = mainModel::cleanData($_POST['item_stock_up']);
+    $estado = mainModel::cleanData($_POST['item_estado_up']);
+    $detalle = mainModel::cleanData($_POST['item_detalle_up']);
+
+    //* - Comprobar campos obligatorios
+    if ($code == "" || $nombre == "" || $stock == "" || $estado == "") {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No has llenado todos los campos que son obligatorios.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificación - Integridad de los datos
+    if (mainModel::verifyData("[a-zA-Z0-9\-]{1,45}", $code)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Código del Item no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if (mainModel::verifyData("[a-zA-záéíóúÁÉÍÓÚñÑ0-9 ]{1,140}", $nombre)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Nombre de la Empresa no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if (mainModel::verifyData("[0-9]{1,9}", $stock)) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Stock no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    if ($detalle != "") {
+      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{1,190}", $detalle)) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "El Detalle no coincide con el formato solicitado",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    if ($estado != "Habilitado" && $estado != "Deshabilitado") {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Estado del Item no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificación de atributos unicos
+    if ($code != $content['item_codigo']) {
+      $check_item_code = mainModel::simpleQuery("SELECT item_codigo FROM item WHERE item_codigo = '$code'");
+      if ($check_item_code->rowCount() > 0) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "El Codigo ingresado ya se encuentra registrado en el sistema.",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    //* - Verificación de atributos unicos
+    if ($nombre != $content['item_nombre']) {
+      $check_item_nombre = mainModel::simpleQuery("SELECT item_nombre FROM item WHERE item_nombre = '$nombre'");
+      if ($check_item_nombre->rowCount() > 0) {
+        $alert = [
+          "Alerts" => "simple",
+          "Title" => "Ocurrió un error inesperado",
+          "Text" => "El Nombre ingresado ya se encuentra registrado en el sistema.",
+          "Tipe" => "error"
+        ];
+        echo json_encode($alert);
+        exit();
+      }
+    }
+
+    //* - Verificar privilegios para actualizar
+    session_start(['name' => 'LoanC']);
+    if ($_SESSION['role_spm'] < 1 || $_SESSION['role_spm'] > 2) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No tienes los permisos necesarios para realizar esta operacion.",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Obtener datos para el enviado
+    $data_iten_up = [
+      "codigo" => $code,
+      "nombre" => $nombre,
+      "stock" => $stock,
+      "estado" => $estado,
+      "detalle" => $detalle,
+      "id" => $id
+    ];
+
+    if (itemModel::updateItemModel($data_iten_up)) {
+      $alert = [
+        "Alerts" => "reload",
+        "Title" => "Datos actualizados",
+        "Text" => "Los datos han sido actualizados con exito.",
+        "Tipe" => "success"
+      ];
+    } else {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "No hemos podido actualizar los datos, por favor intente nuevamente.",
+        "Tipe" => "error"
+      ];
+    }
+    echo json_encode($alert);
+  } //* - Fin de controlador actualizar items
 }

@@ -25,11 +25,16 @@
     </div>
   </a>
 
+  <?php
+  require_once "./controllers/itemController.php";
+  $ins_item = new itemController();
+  $countItems = $ins_item->selectItemController("Count", 0);
+  ?>
   <a href="<?php echo APP_SERVER; ?>item-list/" class="tile">
     <div class="tile-tittle">Items</div>
     <div class="tile-icon">
       <i class="fas fa-pallet fa-fw"></i>
-      <p>9 Registrados</p>
+      <p><?php echo $countItems->rowCount(); ?> Registrados</p>
     </div>
   </a>
 
