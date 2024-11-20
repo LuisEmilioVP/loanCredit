@@ -1,25 +1,25 @@
 <?php
 //* - Detectar la petición ajax o no
 if ($petitionAjax) {
-  require_once "../models/clientModel.php";
+  require_once "../models/itemModel.php";
 } else {
-  require_once "./models/clientModel.php";
+  require_once "./models/itemModel.php";
 }
 
-class clientController extends clientModel
+class itemController extends itemModel
 {
-  /** ---------- Controlador: Agregar Clientes ---------- **/
-  public function addClientController()
+  /** ---------- Controlador: Agregar Items ---------- **/
+  public function addItemController()
   {
     //* - Recibir datos del formu y limpiarlos
-    $dni = mainModel::cleanData($_POST['cliente_dni_reg']);
-    $nombre = mainModel::cleanData($_POST['cliente_nombre_reg']);
-    $apellido = mainModel::cleanData($_POST['cliente_apellido_reg']);
-    $telefono = mainModel::cleanData($_POST['cliente_telefono_reg']);
-    $direccion = mainModel::cleanData($_POST['cliente_direccion_reg']);
+    $code = mainModel::cleanData($_POST['item_codigo_reg']);
+    $nombre = mainModel::cleanData($_POST['item_nombre_reg']);
+    $stock = mainModel::cleanData($_POST['item_stock_reg']);
+    $stado = mainModel::cleanData($_POST['item_estado_reg']);
+    $detalle = mainModel::cleanData($_POST['item_detalle_reg']);
 
     //* - Verificar campos obligatorios
-    if ($dni == "" || $nombre == "" || $apellido == "") {
+    if ($code == "" || $nombre == "" || $stock == "" || $stado == "") {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
@@ -31,45 +31,45 @@ class clientController extends clientModel
     }
 
     //* - Verificación - Integridad de los datos
-    if (mainModel::verifyData("[0-9\-]{10,20}", $dni)) {
+    if (mainModel::verifyData("[a-zA-Z0-9\-]{1,45}", $code)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El DNI no coincide con el formato solicitado",
+        "Text" => "El Código del Item no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $nombre)) {
+    if (mainModel::verifyData("[a-zA-záéíóúÁÉÍÓÚñÑ0-9 ]{1,140}", $nombre)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El Nombre no coincide con el formato solicitado",
+        "Text" => "El Nombre de la Empresa no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $apellido)) {
+    if (mainModel::verifyData("[0-9]{1,9}", $stock)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El Apellido no coincide con el formato solicitado",
+        "Text" => "El Stock no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if ($telefono != "") {
-      if (mainModel::verifyData("[0-9\(\)\+ ]{14,20}", $telefono)) {
+    if ($detalle != "") {
+      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{1,190}", $detalle)) {
         $alert = [
           "Alerts" => "simple",
           "Title" => "Ocurrió un error inesperado",
-          "Text" => "El Teléfono no coincide con el formato solicitado",
+          "Text" => "El Detalle no coincide con el formato solicitado",
           "Tipe" => "error"
         ];
         echo json_encode($alert);
@@ -77,79 +77,75 @@ class clientController extends clientModel
       }
     }
 
-    if ($direccion != "") {
-      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}", $direccion)) {
-        $alert = [
-          "Alerts" => "simple",
-          "Title" => "Ocurrió un error inesperado",
-          "Text" => "La Dirección no coincide con el formato solicitado",
-          "Tipe" => "error"
-        ];
-        echo json_encode($alert);
-        exit();
-      }
-    }
-
-    //* - Verificar el cliente en la DB
-    $check_dni = mainModel::simpleQuery("SELECT cliente_id FROM cliente WHERE cliente_dni = '$dni'");
-
-    if ($check_dni->rowCount() > 0) {
+    if ($stado != "Habilitado" && $stado != "Deshabilitado") {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El DNI ingresado ya se encuentra registrado en el sistema.",
+        "Text" => "El Estado del Item no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    $check_client = mainModel::simpleQuery("SELECT cliente_id FROM cliente WHERE cliente_nombre = '$nombre' OR cliente_apellido = '$apellido'");
+    //* - Verificar el codigo del item en la DB
+    $check_item_code = mainModel::simpleQuery("SELECT item_codigo FROM item WHERE item_codigo = '$code'");
 
-    if ($check_client->rowCount() > 0) {
+    if ($check_item_code->rowCount() > 0) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El cliente ya existe en el sistema",
+        "Text" => "El Código del Item ya se encuentra registrado en el sistema",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    //* - Almacenamiento de los datos
-    $data_client = [
-      "dni" => $dni,
+    //* - Verificar el nombre del item en la DB
+    $check_item_name = mainModel::simpleQuery("SELECT item_nombre FROM item WHERE item_nombre = '$nombre'");
+
+    if ($check_item_name->rowCount() > 0) {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Nombre del Item ya se encuentra registrado en el sistema",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    $data_item = [
+      "codigo" => $code,
       "nombre" => $nombre,
-      "apellido" => $apellido,
-      "telefono" => $telefono,
-      "direccion" => $direccion,
+      "stock" => $stock,
+      "estado" => $stado,
+      "detalle" => $detalle
     ];
 
-    $addClient = clientModel::addClientModel($data_client);
+    $add_item = itemModel::addItemModel($data_item);
 
-    if ($addClient->rowCount() == 1) {
+    if ($add_item->rowCount() == 1) {
       $alert = [
         "Alerts" => "clean",
-        "Title" => "Cliente Registrado!",
-        "Text" => "Los datos del cliente han sido registrados con éxito.",
+        "Title" => "Registro exitoso",
+        "Text" => "Los datos del Item se ha registrado exitosamente.",
         "Tipe" => "success"
       ];
-      echo json_encode($alert);
-      exit();
     } else {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "Los datos no se han podido registrar, intente nuevamente.",
+        "Text" => "No se pudo registrar el Item. Por favor intenta de nuevo.",
         "Tipe" => "error"
       ];
-      echo json_encode($alert);
     }
-  } //* - Fin Controlador: Agregar Clientes
+    echo json_encode($alert);
+  } //* - Fin del controlador de agregar Items
 
   /** ---------- Controlador: Paginar Clientes ---------- **/
-  public function paginationClientsController($page, $register, $rol, $url, $searchs)
+  public function paginationItemsController($page, $register, $rol, $url, $searchs)
   {
     $page = mainModel::cleanData($page);
     $register = mainModel::cleanData($register);
@@ -165,14 +161,14 @@ class clientController extends clientModel
     $inict = ($page > 0) ? (($page * $register) - $register) : 0;
 
     if (isset($searchs) && $searchs != "") {
-      $queryClients = "SELECT SQL_CALC_FOUND_ROWS * FROM cliente WHERE cliente_dni LIKE '%$searchs%' OR cliente_nombre LIKE '%$searchs%' OR cliente_apellido LIKE '%$searchs%' OR cliente_telefono LIKE '%$searchs%' ORDER BY cliente_nombre ASC LIMIT $inict,$register";
+      $queryItems = "SELECT SQL_CALC_FOUND_ROWS * FROM item WHERE item_codigo LIKE '%$searchs%' OR item_nombre LIKE '%$searchs%' ORDER BY item_nombre ASC LIMIT $inict,$register";
     } else {
-      $queryClients = "SELECT SQL_CALC_FOUND_ROWS * FROM cliente ORDER BY cliente_nombre ASC LIMIT $inict,$register";
+      $queryItems = "SELECT SQL_CALC_FOUND_ROWS * FROM item ORDER BY item_nombre ASC LIMIT $inict,$register";
     }
 
     $connect = mainModel::connectionDb();
 
-    $result = $connect->query($queryClients);
+    $result = $connect->query($queryItems);
     $result = $result->fetchAll();
 
     $total = $connect->query("SELECT FOUND_ROWS()");
@@ -185,11 +181,11 @@ class clientController extends clientModel
 					<thead>
 						<tr class="text-center roboto-medium">
               <th>#</th>
-              <th>DNI</th>
+              <th>CÓDIGO</th>
               <th>NOMBRE</th>
-              <th>APELLIDO</th>
-              <th>TELEFONO</th>
-              <th>DIRECCIÓN</th>';
+              <th>STOCK</th>
+              <th>ESTADO</th>
+              <th>DETALLE</th>';
     if ($rol == 1 || $rol == 2) {
       $table .= '<th>ACTUALIZAR</th>';
     }
@@ -209,13 +205,13 @@ class clientController extends clientModel
         $table .= '
 					<tr class="text-center" >
 						<td>' . $container . '</td>
-            <td>' . $rows['cliente_dni'] . '</td>
-            <td>' . $rows['cliente_nombre'] . '</td>
-            <td>' . $rows['cliente_apellido']  . '</td>
-						<td>' . $rows['cliente_telefono'] . '</td>
+            <td>' . $rows['item_codigo'] . '</td>
+            <td>' . $rows['item_nombre'] . '</td>
+            <td>' . $rows['item_stock']  . '</td>
+						<td>' . $rows['item_estado'] . '</td>
 						<td>
               <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover"
-              title="' . $rows['cliente_nombre'] . ' ' . $rows['cliente_apellido'] . '" data-content="' . $rows['cliente_direccion'] . '">
+              title="' . $rows['item_nombre'] . '" data-content="' . $rows['item_detalle'] . '">
               <i class="fas fa-info-circle"></i>
               </button>
             </td>';
@@ -223,7 +219,7 @@ class clientController extends clientModel
         if ($rol == 1 || $rol == 2) {
           $table .= '
           <td>
-							<a href="' . APP_SERVER . 'client-update/' . mainModel::encryption($rows['cliente_id']) . '/" class="btn btn-success">
+							<a href="' . APP_SERVER . 'item-update/' . mainModel::encryption($rows['item_id']) . '/" class="btn btn-success">
 									<i class="fas fa-sync-alt"></i>
 							</a>
 					</td>';
@@ -232,8 +228,8 @@ class clientController extends clientModel
         if ($rol == 1) {
           $table .= '
           	<td>
-							<form class="FromAjax" action="' . APP_SERVER . 'ajax/clientAjax.php" method="POST" data-form="delete" autocomplete="off">
-								<input type="hidden" name="cliente_id_del" value="' . mainModel::encryption($rows['cliente_id']) . '">
+							<form class="FromAjax" action="' . APP_SERVER . 'ajax/itemAjax.php" method="POST" data-form="delete" autocomplete="off">
+								<input type="hidden" name="item_id_del" value="' . mainModel::encryption($rows['item_id']) . '">
 								<button type="submit" class="btn btn-warning">
 										<i class="far fa-trash-alt"></i>
 								</button>
@@ -248,54 +244,54 @@ class clientController extends clientModel
       $reg_end = $container - 1;
     } else {
       if ($total >= 1) {
-        $table .= '<tr class="text-center" ><td colspan="9">
+        $table .= '<tr class="text-center" ><td colspan="8">
 					<a href="' . $url . '" class="btn btn-raised btn-primary btn-sm">Haga clic aca para recargar el listado</a>
 					</td></tr>';
       } else {
-        $table .= '<tr class="text-center" ><td colspan="9">No hay registros en el sistema</td></tr>';
+        $table .= '<tr class="text-center" ><td colspan="8">No hay registros en el sistema</td></tr>';
       }
     }
 
     $table .= '</tbody></table></div>';
 
     if ($total >= 1 && $page <= $numPages) {
-      $table .= '<p class="text-right">Mostrando clientes ' . $reg_init . ' al ' . $reg_end . ' de un total de ' . $total . '</p>';
+      $table .= '<p class="text-right">Mostrando items ' . $reg_init . ' al ' . $reg_end . ' de un total de ' . $total . '</p>';
 
       $table .= mainModel::pagination($page, $numPages, $url, 7);
     }
 
     return $table;
-  } //* - Fin Controlador: Paginar Clientes
+  } //* - Fin Controlador: Paginar Items
 
-  /** ---------- Controlador: Eliminar Clientes ---------- **/
-  public function deleteClientController()
+  /** ---------- Controlador: Eliminar Items ---------- **/
+  public function deleteItemController()
   {
     //* - recibir ID del cliente
-    $id = mainModel::decryption($_POST['cliente_id_del']);
+    $id = mainModel::decryption($_POST['item_id_del']);
     $id = mainModel::cleanData($id);
 
     //* - Verificar el cliente en la DB
-    $check_client = mainModel::simpleQuery("SELECT cliente_id FROM cliente WHERE cliente_id = '$id'");
+    $check_item = mainModel::simpleQuery("SELECT item_id FROM item WHERE item_id = '$id'");
 
-    if ($check_client->rowCount() <= 0) {
+    if ($check_item->rowCount() <= 0) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El cliente que intenta eliminar no existe en el sistema.",
+        "Text" => "El item que intenta eliminar no existe en el sistema.",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    //* - Verificar los prestamos del cliente
-    $check_loan = mainModel::simpleQuery("SELECT cliente_id FROM prestamo WHERE cliente_id = '$id' LIMIT 1");
+    //* - Verificar los detalles del item
+    $check_detail = mainModel::simpleQuery("SELECT item_id FROM detalle WHERE item_id = '$id' LIMIT 1");
 
-    if ($check_loan->rowCount() < 0) {
+    if ($check_detail->rowCount() < 0) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "No podemos eliminar este cliente debido a que tiene préstamos asociados, recomendamos deshabilitar el cliente si ya no será utilizado.",
+        "Text" => "No podemos eliminar este item debido a que tiene detalles asociados. Recomendamos deshabilitar el item si ya no sera utilizado.",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
@@ -315,70 +311,70 @@ class clientController extends clientModel
       exit();
     }
 
-    //* - Eliminar cliente
-    $delete_client = clientModel::deleteClientModel($id);
+    //* - Eliminar item
+    $delete_item = itemModel::deleteItemModel($id);
 
-    if ($delete_client->rowCount() == 1) {
+    if ($delete_item->rowCount() == 1) {
       $alert = [
         "Alerts" => "reload",
-        "Title" => "Cleinte eliminado!",
-        "Text" => "El cliente ha sido eliminado del sistema exitosamente.",
+        "Title" => "Item eliminado!",
+        "Text" => "El item ha sido eliminado del sistema exitosamente.",
         "Tipe" => "success"
       ];
     } else {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "No hemos podido eliminar el cliente, por favor intente nuevamente.",
+        "Text" => "No hemos podido eliminar el item, por favor intente nuevamente.",
         "Tipe" => "error"
       ];
     }
     echo json_encode($alert);
-  } //* - Fin controlador Eliminar Clientes
+  } //* - Fin controlador Eliminar Items
 
-  /** ---------- Controlador: Seleccionar Datos de Clientes ---------- **/
-  public function selectClientController($type, $id)
+  /** ---------- Controlador: Seleccionar Datos de Items ---------- **/
+  public function selectItemController($type, $id)
   {
     $type = mainModel::cleanData($type);
 
     $id = mainModel::decryption($id);
     $id = mainModel::cleanData($id);
 
-    return clientModel::selectClientModel($type, $id);
-  } //* - Fin controlador Seleccionar Datos de Clientes
+    return itemModel::selectItemModel($type, $id);
+  } //* - Fin controlador Seleccionar Items
 
-  /** ---------- Controlador: Actualizar Clientes ---------- **/
-  public function updateClientController()
+  /** ---------- Controlador: Actualizar Items ---------- **/
+  public function updateItemController()
   {
     //* - Recibir id del cliente
-    $id = mainModel::decryption($_POST['cliente_id_up']);
+    $id = mainModel::decryption($_POST['item_id_up']);
     $id = mainModel::cleanData($id);
 
-    //* - Comprobar el cliente en la DB
-    $check_client = mainModel::simpleQuery("SELECT * FROM cliente WHERE cliente_id = '$id'");
+    //* - Comprobar el item en la DB
+    $check_item = mainModel::simpleQuery("SELECT * FROM item WHERE item_id = '$id'");
 
-    if ($check_client->rowCount() <= 0) {
+    if ($check_item->rowCount() <= 0) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "No hemos encontrado el cliente en el sistema.",
+        "Text" => "No hemos encontrado el item en el sistema.",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     } else {
-      $content = $check_client->fetch();
+      $content = $check_item->fetch();
     }
 
     //* - Recibir datos del formu y limpiarlos
-    $dni = mainModel::cleanData($_POST['cliente_dni_up']);
-    $nombre = mainModel::cleanData($_POST['cliente_nombre_up']);
-    $apellido = mainModel::cleanData($_POST['cliente_apellido_up']);
-    $telefono = mainModel::cleanData($_POST['cliente_telefono_up']);
-    $direccion = mainModel::cleanData($_POST['cliente_direccion_up']);
+    $code = mainModel::cleanData($_POST['item_codigo_up']);
+    $nombre = mainModel::cleanData($_POST['item_nombre_up']);
+    $stock = mainModel::cleanData($_POST['item_stock_up']);
+    $estado = mainModel::cleanData($_POST['item_estado_up']);
+    $detalle = mainModel::cleanData($_POST['item_detalle_up']);
 
     //* - Comprobar campos obligatorios
-    if ($dni == "" || $nombre == "" || $apellido == "") {
+    if ($code == "" || $nombre == "" || $stock == "" || $estado == "") {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
@@ -390,45 +386,45 @@ class clientController extends clientModel
     }
 
     //* - Verificación - Integridad de los datos
-    if (mainModel::verifyData("[0-9\-]{10,20}", $dni)) {
+    if (mainModel::verifyData("[a-zA-Z0-9\-]{1,45}", $code)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El DNI no coincide con el formato solicitado.",
+        "Text" => "El Código del Item no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $nombre)) {
+    if (mainModel::verifyData("[a-zA-záéíóúÁÉÍÓÚñÑ0-9 ]{1,140}", $nombre)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El Nombre no coincide con el formato solicitado",
+        "Text" => "El Nombre de la Empresa no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if (mainModel::verifyData("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,35}", $apellido)) {
+    if (mainModel::verifyData("[0-9]{1,9}", $stock)) {
       $alert = [
         "Alerts" => "simple",
         "Title" => "Ocurrió un error inesperado",
-        "Text" => "El Apellido no coincide con el formato solicitado",
+        "Text" => "El Stock no coincide con el formato solicitado",
         "Tipe" => "error"
       ];
       echo json_encode($alert);
       exit();
     }
 
-    if ($telefono != "") {
-      if (mainModel::verifyData("[0-9\(\)\+ ]{14,20}", $telefono)) {
+    if ($detalle != "") {
+      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{1,190}", $detalle)) {
         $alert = [
           "Alerts" => "simple",
           "Title" => "Ocurrió un error inesperado",
-          "Text" => "El Teléfono no coincide con el formato solicitado",
+          "Text" => "El Detalle no coincide con el formato solicitado",
           "Tipe" => "error"
         ];
         echo json_encode($alert);
@@ -436,12 +432,25 @@ class clientController extends clientModel
       }
     }
 
-    if ($direccion != "") {
-      if (mainModel::verifyData("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\(\).,#\- ]{6,190}", $direccion)) {
+    if ($estado != "Habilitado" && $estado != "Deshabilitado") {
+      $alert = [
+        "Alerts" => "simple",
+        "Title" => "Ocurrió un error inesperado",
+        "Text" => "El Estado del Item no coincide con el formato solicitado",
+        "Tipe" => "error"
+      ];
+      echo json_encode($alert);
+      exit();
+    }
+
+    //* - Verificación de atributos unicos
+    if ($code != $content['item_codigo']) {
+      $check_item_code = mainModel::simpleQuery("SELECT item_codigo FROM item WHERE item_codigo = '$code'");
+      if ($check_item_code->rowCount() > 0) {
         $alert = [
           "Alerts" => "simple",
           "Title" => "Ocurrió un error inesperado",
-          "Text" => "La Dirección no coincide con el formato solicitado",
+          "Text" => "El Codigo ingresado ya se encuentra registrado en el sistema.",
           "Tipe" => "error"
         ];
         echo json_encode($alert);
@@ -450,13 +459,13 @@ class clientController extends clientModel
     }
 
     //* - Verificación de atributos unicos
-    if ($dni != $content['cliente_dni']) {
-      $check_dni = mainModel::simpleQuery("SELECT cliente_dni FROM cliente WHERE cliente_dni = '$dni'");
-      if ($check_dni->rowCount() > 0) {
+    if ($nombre != $content['item_nombre']) {
+      $check_item_nombre = mainModel::simpleQuery("SELECT item_nombre FROM item WHERE item_nombre = '$nombre'");
+      if ($check_item_nombre->rowCount() > 0) {
         $alert = [
           "Alerts" => "simple",
           "Title" => "Ocurrió un error inesperado",
-          "Text" => "El DNI ingresado ya se encuentra registrado en el sistema.",
+          "Text" => "El Nombre ingresado ya se encuentra registrado en el sistema.",
           "Tipe" => "error"
         ];
         echo json_encode($alert);
@@ -478,16 +487,16 @@ class clientController extends clientModel
     }
 
     //* - Obtener datos para el enviado
-    $data_client_up = [
-      "dni" => $dni,
+    $data_iten_up = [
+      "codigo" => $code,
       "nombre" => $nombre,
-      "apellido" => $apellido,
-      "telefono" => $telefono,
-      "direccion" => $direccion,
+      "stock" => $stock,
+      "estado" => $estado,
+      "detalle" => $detalle,
       "id" => $id
     ];
 
-    if (clientModel::updateClientModel($data_client_up)) {
+    if (itemModel::updateItemModel($data_iten_up)) {
       $alert = [
         "Alerts" => "reload",
         "Title" => "Datos actualizados",
@@ -503,5 +512,5 @@ class clientController extends clientModel
       ];
     }
     echo json_encode($alert);
-  } //* - Fin de controlador actualizar Clientes
+  } //* - Fin de controlador actualizar items
 }
