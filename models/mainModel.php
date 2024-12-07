@@ -46,7 +46,7 @@ class mainModel
   }
 
   /** ---------- Funcion: General Codigos Aleaterios ---------- **/
-  protected static function randomCode($length, $chars, $numbers)
+  protected static function randomCode($chars, $length, $numbers)
   {
     for ($i = 1; $i <= $length; $i++) {
       $random = rand(0, 9);

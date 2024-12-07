@@ -38,11 +38,18 @@
     </div>
   </a>
 
+  <?php
+  require_once "./controllers/loanController.php";
+  $ins_loan = new loanController();
+  $reserve_total = $ins_loan->selectLoanController("Count_Reserve", 0);
+  $loand_total = $ins_loan->selectLoanController("Count_Loan", 0);
+  $finished_total = $ins_loan->selectLoanController("Count_Finished", 0);
+  ?>
   <a href="<?php echo APP_SERVER; ?>reservation-reservation/" class="tile">
     <div class="tile-tittle">Reservaciones</div>
     <div class="tile-icon">
       <i class="far fa-calendar-alt fa-fw"></i>
-      <p>30 Registradas</p>
+      <p><?php echo $reserve_total->rowCount(); ?> Registradas</p>
     </div>
   </a>
 
@@ -50,7 +57,7 @@
     <div class="tile-tittle">Prestamos</div>
     <div class="tile-icon">
       <i class="fas fa-hand-holding-usd fa-fw"></i>
-      <p>200 Registrados</p>
+      <p><?php echo $loand_total->rowCount(); ?> Registrados</p>
     </div>
   </a>
 
@@ -58,7 +65,7 @@
     <div class="tile-tittle">Finalizados</div>
     <div class="tile-icon">
       <i class="fas fa-clipboard-list fa-fw"></i>
-      <p>700 Registrados</p>
+      <p><?php echo $finished_total->rowCount(); ?> Registrados</p>
     </div>
   </a>
 

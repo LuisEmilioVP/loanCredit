@@ -87,9 +87,10 @@
               $_SESSION['total_item'] = 0;
 
               foreach ($_SESSION['item_data'] as $item) {
+                //* - Calcular el subtotal
                 $subtotal = $item['cantidad'] * ($item['costo'] * $item['tiempo']);
 
-                $subtotal = number_format($subtotal, 2, ".", " ");
+                $subtotal = number_format($subtotal, 2, ".", "");
             ?>
                 <tr class="text-center">
                   <td><?php echo $item['nombre']; ?></td>
@@ -138,6 +139,7 @@
         </table>
       </div>
     </div>
+    <!-- FromAjax -->
     <form class="FromAjax" action="<?php echo APP_SERVER; ?>ajax/loanAjax.php" method="post" data-form="save" autocomplete="off">
       <fieldset>
         <legend>
@@ -217,7 +219,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="prestamo_observacion" class="bmd-label-floating">Observación</label>
-                <input type="text" pattern="[a-zA-z0-9áéíóúÁÉÍÓÚñÑ#() ]{1,400}" class="form-control"
+                <input type="text" pattern="[a-zA-z0-9áéíóúÁÉÍÓÚñÑ#\(\) ]{1,400}" class="form-control"
                   name="prestamo_observacion_reg" id="prestamo_observacion" maxlength="400" />
               </div>
             </div>
