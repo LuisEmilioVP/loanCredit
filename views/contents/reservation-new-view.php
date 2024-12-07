@@ -41,23 +41,31 @@
     <div class="container-fluid">
       <p class="text-center roboto-medium">AGREGAR CLIENTE O ITEMS</p>
       <p class="text-center">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalCliente">
-          <i class="fas fa-user-plus"></i> &nbsp; Agregar cliente
-        </button>
+
+        <?php if (empty($_SESSION['client_data'])) { ?>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalCliente">
+            <i class="fas fa-user-plus"></i> &nbsp; Agregar cliente
+          </button>
+        <?php } ?>
+
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalItem">
           <i class="fas fa-box-open"></i> &nbsp; Agregar item
         </button>
       </p>
       <div>
         <span class="roboto-medium">CLIENTE:</span>
-        <span class="text-danger">&nbsp; <i class="fas fa-exclamation-triangle"></i> Seleccione un
-          cliente</span>
-        <form action="" style="display: inline-block !important">
-          Carlos Alfaro
-          <button type="button" class="btn btn-danger">
-            <i class="fas fa-user-times"></i>
-          </button>
-        </form>
+        <?php if (empty($_SESSION['client_data'])) { ?>
+          <span class="text-danger">&nbsp; <i class="fas fa-exclamation-triangle"></i> Seleccione un
+            cliente</span>
+        <?php } else { ?>
+          <form class="FromAjax" action="<?php echo APP_SERVER; ?>ajax/loanAjax.php" method="post" data-form="loans" style="display: inline-block !important">
+            <input type="hidden" name="delete_client_id" value="<?php echo $_SESSION['client_data']['id']; ?>">
+            <?php echo $_SESSION['client_data']['nombre'] . " " . $_SESSION['client_data']['apellido'] . " - " . "(" . $_SESSION['client_data']['dni'] . ")"; ?>
+            <button type="submit" class="btn btn-danger">
+              <i class="fas fa-user-times"></i>
+            </button>
+          </form>
+        <?php } ?>
       </div>
       <div class="table-responsive">
         <table class="table table-dark table-sm">
@@ -73,78 +81,64 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-center">
-              <td>Silla plastica</td>
-              <td>7</td>
-              <td>Hora</td>
-              <td>$5.00</td>
-              <td>$35.00</td>
-              <td>
-                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover"
-                  title="Nombre del item" data-content="Detalle completo del item">
-                  <i class="fas fa-info-circle"></i>
-                </button>
-              </td>
-              <td>
-                <form action="">
-                  <button type="button" class="btn btn-warning">
-                    <i class="far fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
-            </tr>
-            <tr class="text-center">
-              <td>Silla metalica</td>
-              <td>9</td>
-              <td>Día</td>
-              <td>$5.00</td>
-              <td>$45.00</td>
-              <td>
-                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover"
-                  title="Nombre del item" data-content="Detalle completo del item">
-                  <i class="fas fa-info-circle"></i>
-                </button>
-              </td>
-              <td>
-                <form action="">
-                  <button type="button" class="btn btn-warning">
-                    <i class="far fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
-            </tr>
-            <tr class="text-center">
-              <td>Mesa plastica</td>
-              <td>5</td>
-              <td>Evento</td>
-              <td>$10.00</td>
-              <td>$50.00</td>
-              <td>
-                <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover"
-                  title="Nombre del item" data-content="Detalle completo del item">
-                  <i class="fas fa-info-circle"></i>
-                </button>
-              </td>
-              <td>
-                <form action="">
-                  <button type="button" class="btn btn-warning">
-                    <i class="far fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
-            </tr>
-            <tr class="text-center bg-light">
-              <td><strong>TOTAL</strong></td>
-              <td><strong>21 items</strong></td>
-              <td colspan="2"></td>
-              <td><strong>$130.00</strong></td>
-              <td colspan="2"></td>
-            </tr>
+            <?php
+            if (isset($_SESSION['item_data']) && count($_SESSION['item_data']) >= 1) {
+              $_SESSION['total_loan'] = 0;
+              $_SESSION['total_item'] = 0;
+
+              foreach ($_SESSION['item_data'] as $item) {
+                $subtotal = $item['cantidad'] * ($item['costo'] * $item['tiempo']);
+
+                $subtotal = number_format($subtotal, 2, ".", " ");
+            ?>
+                <tr class="text-center">
+                  <td><?php echo $item['nombre']; ?></td>
+                  <td><?php echo $item['cantidad']; ?></td>
+                  <td><?php echo $item['tiempo'] . " " . $item['formato']; ?></td>
+                  <td><?php echo APP_MONEY . $item['costo'] . " x 1 " . $item['formato']; ?></td>
+                  <td><?php echo APP_MONEY . $subtotal; ?></td>
+                  <td>
+                    <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover"
+                      title="<?php echo $item['nombre']; ?>" data-content="<?php echo $item['detalle']; ?>">
+                      <i class="fas fa-info-circle"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <form class="FromAjax" action="<?php echo APP_SERVER; ?>ajax/loanAjax.php" method="post" data-form="loans" autocomplete="off">
+                      <input type="hidden" name="delete_item_id" value="<?php echo $item['id']; ?>">
+                      <button type="submit" class="btn btn-warning">
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+
+              <?php
+                $_SESSION['total_loan'] += $subtotal;
+                $_SESSION['total_item'] += $item['cantidad'];
+              } ?>
+              <tr class="text-center bg-light">
+                <td><strong>TOTAL</strong></td>
+                <td><strong><?php echo $_SESSION['total_item']; ?> items</strong></td>
+                <td colspan="2"></td>
+                <td><strong><?php echo APP_MONEY . number_format($_SESSION['total_loan'], 2, ".", " "); ?></strong></td>
+                <td colspan="2"></td>
+              </tr>
+
+            <?php
+            } else {
+              $_SESSION['total_loan'] = 0;
+              $_SESSION['total_item'] = 0;
+            ?>
+              <tr class="text-center">
+                <td colspan="7">No hay items en la reserva</td>
+              </tr>
+            <?php } ?>
           </tbody>
         </table>
       </div>
     </div>
-    <form action="" autocomplete="off">
+    <form class="FromAjax" action="<?php echo APP_SERVER; ?>ajax/loanAjax.php" method="post" data-form="save" autocomplete="off">
       <fieldset>
         <legend>
           <i class="far fa-clock"></i> &nbsp; Fecha y hora de préstamo
@@ -154,18 +148,19 @@
             <div class="col-12 col-md-6">
               <div class="form-group">
                 <label for="prestamo_fecha_inicio">Fecha de préstamo</label>
-                <input type="date" class="form-control" name="prestamo_fecha_inicio_reg" id="prestamo_fecha_inicio" />
+                <input type="date" class="form-control" name="prestamo_fecha_inicio_reg" id="prestamo_fecha_inicio" value="<?php echo date("Y-m-d"); ?>" />
               </div>
             </div>
             <div class="col-12 col-md-6">
               <div class="form-group">
                 <label for="prestamo_hora_inicio">Hora de préstamo</label>
-                <input type="time" class="form-control" name="prestamo_hora_inicio_reg" id="prestamo_hora_inicio" />
+                <input type="time" class="form-control" name="prestamo_hora_inicio_reg" id="prestamo_hora_inicio" value="<?php echo date("H:i"); ?>" />
               </div>
             </div>
           </div>
         </div>
       </fieldset>
+
       <fieldset>
         <legend>
           <i class="fas fa-history"></i> &nbsp; Fecha y hora de entrega
@@ -187,6 +182,7 @@
           </div>
         </div>
       </fieldset>
+
       <fieldset>
         <legend><i class="fas fa-cubes"></i> &nbsp; Otros datos</legend>
         <div class="container-fluid">
@@ -195,7 +191,7 @@
               <div class="form-group">
                 <label for="prestamo_estado" class="bmd-label-floating">Estado</label>
                 <select class="form-control" name="prestamo_estado_reg" id="prestamo_estado">
-                  <option value="" selected="" disabled="">
+                  <option value="" selected="">
                     Seleccione una opción
                   </option>
                   <option value="Reservacion">Reservación</option>
@@ -206,14 +202,14 @@
             </div>
             <div class="col-12 col-md-4">
               <div class="form-group">
-                <label for="prestamo_total" class="bmd-label-floating">Total a pagar en $</label>
-                <input type="text" pattern="[0-9.]{1,10}" class="form-control" readonly="" value="100.00"
+                <label for="prestamo_total" class="bmd-label-floating">Total a pagar en <?php echo APP_MONEY; ?></label>
+                <input type="text" pattern="[0-9.]{1,10}" class="form-control" readonly="" value="<?php echo number_format($_SESSION['total_loan'], 2, ".", " "); ?>"
                   id="prestamo_total" maxlength="10" />
               </div>
             </div>
             <div class="col-12 col-md-4">
               <div class="form-group">
-                <label for="prestamo_pagado" class="bmd-label-floating">Total depositado en $</label>
+                <label for="prestamo_pagado" class="bmd-label-floating">Total depositado en <?php echo APP_MONEY; ?></label>
                 <input type="text" pattern="[0-9.]{1,10}" class="form-control" name="prestamo_pagado_reg"
                   id="prestamo_pagado" maxlength="10" />
               </div>
@@ -256,53 +252,17 @@
         <div class="container-fluid">
           <div class="form-group">
             <label for="input_cliente" class="bmd-label-floating">DNI, Nombre, Apellido, Telefono</label>
-            <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" class="form-control" name="input_cliente"
+            <input type="text" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{3,30}" class="form-control" name="input_cliente"
               id="input_cliente" maxlength="30" />
           </div>
         </div>
         <br />
         <div class="container-fluid" id="tabla_clientes">
-          <div class="table-responsive">
-            <table class="table table-hover table-bordered table-sm">
-              <tbody>
-                <tr class="text-center">
-                  <td>0000000000 - Nombre del cliente</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-user-plus"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="text-center">
-                  <td>0000000000 - Nombre del cliente</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-user-plus"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="text-center">
-                  <td>0000000000 - Nombre del cliente</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-user-plus"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="alert alert-warning" role="alert">
-          <p class="text-center mb-0">
-            <i class="fas fa-exclamation-triangle fa-2x"></i><br />
-            No hemos encontrado ningún cliente en el sistema que coincida con
-            <strong>“Busqueda”</strong>
-          </p>
+          <!-- Tables data -->
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" onclick="search_client()">
           <i class="fas fa-search fa-fw"></i> &nbsp; Buscar
         </button>
         &nbsp; &nbsp;
@@ -334,57 +294,14 @@
         </div>
         <br />
         <div class="container-fluid" id="tabla_items">
-          <div class="table-responsive">
-            <table class="table table-hover table-bordered table-sm">
-              <tbody>
-                <tr class="text-center">
-                  <td>000000000000 - Nombre del item</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-box-open"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="text-center">
-                  <td>000000000000 - Nombre del item</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-box-open"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="text-center">
-                  <td>000000000000 - Nombre del item</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-box-open"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr class="text-center">
-                  <td>000000000000 - Nombre del item</td>
-                  <td>
-                    <button type="button" class="btn btn-primary">
-                      <i class="fas fa-box-open"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="alert alert-warning" role="alert">
-          <p class="text-center mb-0">
-            <i class="fas fa-exclamation-triangle fa-2x"></i><br />
-            No hemos encontrado ningún item en el sistema que coincida con
-            <strong>“Busqueda”</strong>
-          </p>
+          <!--  Tables data - items -->
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" onclick="search_item()">
           <i class="fas fa-search fa-fw"></i> &nbsp; Buscar
         </button>
+
         &nbsp; &nbsp;
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
           Cerrar
@@ -398,7 +315,8 @@
 <div class="modal fade" id="ModalAgregarItem" tabindex="-1" role="dialog" aria-labelledby="ModalAgregarItem"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <form class="modal-content FormularioAjax">
+    <!-- FromAjax -->
+    <form class="modal-content FromAjax" action="<?php echo APP_SERVER; ?>ajax/loanAjax.php" method="post" data-form="default" autocomplete="off">
       <div class="modal-header">
         <h5 class="modal-title" id="ModalAgregarItem">
           Selecciona el formato, cantidad de items, tiempo y costo del
@@ -409,7 +327,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <input type="hidden" name="id_agregar_item" id="id_agregar_item" />
+        <input type="hidden" name="add_item_id" id="add_item_id" />
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
@@ -450,8 +368,10 @@
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Agregar</button>
         &nbsp; &nbsp;
-        <button type="button" class="btn btn-secondary">Cancelar</button>
+        <button type="button" class="btn btn-secondary" onclick="show_modal_item()">Cancelar</button>
       </div>
     </form>
   </div>
 </div>
+
+<?php include_once "./views/include/reservation.php"; ?>
